@@ -1,4 +1,6 @@
-#+title: Dotfiles
+#+STARTUP: overview hideblocks
+#+OPTIONS: num:nil author:nil
+#+PROPERTY: header-args :mkdirp yes
 
 WARNING: This readme is EXTREMELY long!
 I suggest clicking on a link below to navigate the page:
@@ -20,7 +22,298 @@ C-c ' (while in source block, see <s (tab) above ^^^) opens code block in mini b
 
 ** Helpful url links
 https://www.inmotionhosting.com/support/edu/emacs/create-dotfiles-with-emacs/
+https://to1ne.gitlab.io/literate-dotfiles/
 * Emacs
+** Sensible Defaults
+  :PROPERTIES:
+  :header-args: :tangle ~/.emacs.d/init.el
+  :END:
+Lets Start with some sensible defaults
+#+BEGIN_SRC emacs-lisp
+;; Disable startup screen
+(setq inhibit-startup-message t)
+
+;; make eshell the default buffer when opening emacs
+;; (setq initial-buffer-choice 'eshell-new)
+(setq initial-buffer-choice 'eshell-new)
+
+;; set line highlight mode in gui mode only
+(when window-system (global-hl-line-mode t))
+
+(scroll-bar-mode -1)	; Disable visible scrollbar
+(tool-bar-mode -1)	; Disable the toolbar
+(tooltip-mode -1)	; Disable tooltips
+(set-fringe-mode 10)	; Give some breathing room
+(menu-bar-mode -1)	; Disbale the menu bar
+(setq visible-bell t)	; Set up the visible bell
+(global-display-line-numbers-mode 1)
+(visual-line-mode 1)    ; make visual-line-mode default
+
+;; Set transparency
+;; (set-frame-parameter (selected-frame) 'alpha '(85 85))
+;; (add-to-list 'default-frame-alist '(alpha 85 85))
+
+
+
+;; Keep init.el clean by moving emacs-generated code to it's own file
+;; (setq custom-file (concat user-emacs-directory "/custom.el"))
+;; (load-file "/custom.el")
+
+;; Make ESC quit Prompts
+(global-set-key (kbd "<escape>") 'keyboard-escape-quit)
+
+;; font settings
+;; The Quick Brown Fox Jumps Over The Lazy Dog.
+;; (set-face-attribute 'default nil :font "FantasqueSansMono" :height 150)
+
+;; make 'yes or no' prompts 'y or n'
+(defalias 'yes-or-no-p 'y-or-n-p)
+
+#+END_SRC
+
+** Package Repositories
+  :PROPERTIES:
+  :header-args: :tangle ~/.emacs.d/init.el
+  :END:
+Note that we could also add ("melpa-stable" . "https://stable.melpa.org/packages/") if we wanted to not be on the bleeding edge.
+#+BEGIN_SRC emacs-lisp
+(require 'package)
+
+(setq package-archives '(("melpa" . "https://melpa.org/packages/")
+			 ("org" . "https://orgmode.org/elpa")
+			 ("elpa" . "https://elpa.gnu.org/packages/")))
+;; 
+(package-initialize)
+(unless package-archive-contents
+  (package-refresh-contents))
+
+#+END_SRC
+
+** use-package
+  :PROPERTIES:
+  :header-args: :tangle ~/.emacs.d/init.el
+  :END:
+This is all kinds of necessary for setting up configs
+#+BEGIN_SRC emacs-lisp
+;; Initialize use-package on non-linux platforms
+(unless (package-installed-p 'use-package)
+  (package-install 'use-package))
+
+(require 'use-package)
+(setq use-package-always-ensure t)
+#+END_SRC
+** Configured-Packages
+*** which-key
+  :PROPERTIES:
+  :header-args: :tangle ~/.emacs.d/init.el
+  :END:
+#+BEGIN_SRC emacs-lisp
+(use-package which-key)
+#+END_SRC
+
+*** Doom-modeline
+  :PROPERTIES:
+  :header-args: :tangle :mkdirp ~/.emacs.d/init.el
+  :END:
+#+BEGIN_SRC emacs-lisp
+(use-package doom-modeline
+  :ensure t
+  :custom
+  (doom-modeline-height 25 "the height of the bar")
+  :init (doom-modeline-mode 1))
+#+END_SRC
+
+*** all-the-icons
+  :PROPERTIES:
+  :header-args: :tangle :mkdirp ~/.emacs.d/init.el
+  :END:
+Some nice icons for doom modeline
+NOTE: first time using this computer, use command "all-the-icons-install-fonts" to install it on your pc"
+#+BEGIN_SRC emacs-lisp
+(use-package all-the-icons)
+#+END_SRC
+*** ivy
+  :PROPERTIES:
+  :header-args: :tangle :mkdirp ~/.emacs.d/init.el
+  :END:
+#+BEGIN_SRC emacs-lisp
+(use-package ivy
+  :diminish
+  :bind (("C-s" . swiper)
+	 :map ivy-minibuffer-map
+	 ("TAB" . ivy-alt-done)
+	 ("C-l" . ivy-alt-done)
+	 ("C-j" . ivy-next-line)
+	 ("C-k" . ivy-previous-line)
+	 :map ivy-switch-buffer-map
+	 ("C-k" . ivy-previous-line)
+	 ("C-l" . ivy-done)
+	 ("C-d" . ivy-switch-buffer-kill)
+	 :map ivy-reverse-i-search-map
+	 ("C-k" . ivy-previous-line)
+	 ("C-d" . ivy-reverse-i-search-kill))
+  :config
+  (ivy-mode 1))
+#+END_SRC
+
+*** counsel
+  :PROPERTIES:
+  :header-args: :tangle :mkdirp ~/.emacs.d/init.el
+  :END:
+#+BEGIN_SRC emacs-lisp
+(use-package counsel)
+#+END_SRC
+*** magit
+  :PROPERTIES:
+  :header-args: :tangle :mkdirp ~/.emacs.d/init.el
+  :END:
+#+BEGIN_SRC emacs-lisp
+(use-package magit
+  :ensure t
+  :config
+  (setq magit-push-always-verify nil)
+  (setq git-commit-summary-max-length 50)
+  :bind
+  ("M-g" . magit-status))
+#+END_SRC
+*** elpher (gemini client)
+  :PROPERTIES:
+  :header-args: :tangle :mkdirp ~/.emacs.d/init.el
+  :END:
+#+BEGIN_SRC emacs-lisp
+(use-package elpher)
+#+END_SRC
+
+*** eshell
+**** set alias file
+  :PROPERTIES:
+  :header-args: :tangle :mkdirp ~/.emacs.d/init.el
+  :END:
+#+BEGIN_SRC emacs-lisp
+(setq eshell-aliases-file "~/.emacs.d/eshell/alias")
+#+END_SRC
+
+**** new eshell buffer seperate from the last one
+  :PROPERTIES:
+  :header-args: :tangle :mkdirp ~/.emacs.d/init.el
+  :END:
+#+BEGIN_SRC emacs-lisp
+(defun eshell-new()
+  "Open a new instance of eshell."
+  (interactive)
+  (eshell 'N))
+#+END_SRC
+
+**** set performance variables
+  :PROPERTIES:
+  :header-args: :tangle :mkdirp ~/.emacs.d/init.el
+  :END:
+#+BEGIN_SRC emacs-lisp
+(defun efs/configure-eshell ()
+  ;; Save command history when commands are entered
+  (add-hook 'eshell-pre-command-hook 'eshell-save-some-history)
+
+  ;; Truncate buffer for performance
+  (add-to-list 'eshell-output-filter-functions 'eshell-truncate-buffer)
+
+  ;; Set some variables
+
+  (setq eshell-history-size: 10000
+	eshell-buffer-maximum-lines 10000
+	eshell-hist-ignoredups t
+	eshell-scroll-to-bottom-on-input t))
+#+END_SRC
+
+**** eshell-git-prompt
+  :PROPERTIES:
+  :header-args: :tangle :mkdirp ~/.emacs.d/init.el
+  :END:
+#+BEGIN_SRC emacs-lisp
+(use-package eshell-git-prompt)
+#+END_SRC
+
+**** main eshell config
+  :PROPERTIES:
+  :header-args: :tangle :mkdirp ~/.emacs.d/init.el
+  :END:
+#+BEGIN_SRC emacs-lisp
+  (use-package eshell
+  :hook (eshell-first-time-mode . efs/configure-eshell)
+  :init
+;  (bind-key "C-'" 'eshell-new) ;; creates new buffer - for some reason this is global
+  :config
+  (with-eval-after-load 'esh-opt
+    (setq eshell-destroy-buffer-when-process-dies t)
+    (setq eshell-visual-commands '("htop" "zsh" "vim" "ncmpcpp" "newsboat")))
+(eshell-git-prompt-use-theme 'powerline))
+
+;; eshell smart display (port of  plan 9 smart shell for eshell)
+(require 'em-smart)
+(setq eshell-where-to-jump 'begin)
+(setq eshell-review-quick-commands nil)
+(setq eshell-smart-space-goes-to-end t)
+#+END_SRC** 
+
+*** eww-lnum
+  :PROPERTIES:
+  :header-args: :tangle :mkdirp ~/.emacs.d/init.el
+  :END:
+Adds link following to eww (qutebrowser style)
+#+BEGIN_SRC emacs-lisp
+(use-package eww-lnum)
+#+END_SRC
+*** w3m
+  :PROPERTIES:
+  :header-args: :tangle :mkdirp ~/.emacs.d/init.el
+  :END:
+#+BEGIN_SRC emacs-lisp
+(use-package w3m)
+(setq w3m-display-inline-images t)
+#+END_SRC
+
+*** emms
+  :PROPERTIES:
+  :header-args: :tangle :mkdirp ~/.emacs.d/init.el
+  :END:
+#+BEGIN_SRC emacs-lisp
+  (use-package emms
+    :ensure t
+    :config
+    (require 'emms-setup)
+    (require 'emms-player-mpd)
+    (emms-all  (setq emms-seek-seconds 5)
+    (setq emms-player-list '(emms-player-mpd))
+    (setq emms-info-functions '(emms-info-mpd))
+    (setq emms-player-mpd-server-name "localhost")
+    (setq emms-player-mpd-server-port "6602")
+    :bind
+    ("C-m m" . emms)
+    ("C-m b" . emms-smart-browse)
+    ("C-m r" . emms-player-mpd-update-all-reset-cache)
+    ("C-m h" . emms-previous)
+    ("C-m l" . emms-next)
+    ("C-m p" . emms-pause)
+    ("C-m s" . emms-stop)))
+#+END_SRC
+** Themes
+  :PROPERTIES:
+  :header-args: :tangle ~/.emacs.d/init.el
+  :END:
+Lets download a bunch of themes
+#+BEGIN_SRC emacs-lisp
+(use-package sweet-theme)
+(use-package exotica-theme)
+(use-package acme-theme) ; from plan 9
+(use-package doom-themes)
+#+END_SRC
+
+And now lets set the theme
+  :PROPERTIES:
+  :header-args: :tangle ~/.emacs.d/init.el
+  :END:
+#+BEGIN_SRC emacs-lisp
+(load-theme 'acme t)
+#+END_SRC
 
 * MPD
 ** Installation notes
@@ -31,7 +324,7 @@ Just remove the file, start mpd, which will produce an error saying that the fil
 
 ** Config
   :PROPERTIES:
-  :header-args: :tangle ~/.mpd/mpd.conf
+  :header-args: :tangle :mkdirp ~/.mpd/mpd.conf
   :END:
 
 Main Configuration for mpd
@@ -100,7 +393,7 @@ Plain file for mpd to store it's current state
 * Ncmpcpp
 ** Config
   :PROPERTIES:
-  :header-args: :tangle ~/.ncmpcpp/config
+  :header-args: :tangle :mkdirp ~/.ncmpcpp/config
   :END:
 
 #+BEGIN_SRC C
@@ -189,7 +482,7 @@ visualizer_color = "red"
 #+END_SRC
 ** Keybindings
   :PROPERTIES:
-  :header-args: :tangle ~/.ncmpcpp/bindings
+  :header-args: :tangle :mkdirp  ~/.ncmpcpp/bindings
   :END:
 #+BEGIN_SRC C
 ##############################################################
@@ -676,11 +969,11 @@ def_key "P"
 # todo 
 # add shift j and shift k to move between view modes (originally keys 1 through 6) // or maybe set it to be volume up and down to match mpv?
 #+END_SRC
+
 * Xresources
   :PROPERTIES:
-  :header-args: :tangle ~/.Xresources
+  :header-args: :tangle :mkdirp ~/.Xresources
   :END:
-
 This file configures the low level settings of x-org, and is many programs use it to base their themes off of.
 #+BEGIN_SRC shell
 URxvt.font: xft:monospace:size=12
@@ -803,7 +1096,7 @@ alias .......="cd ../../../../../.."
 #+END_SRC
 * i3wm
   :PROPERTIES:
-  :header-args: :tangle ~/.config/i3/config
+  :header-args: :tangle :mkdirp ~/.config/i3/config
   :END:
 #+BEGIN_SRC idk
 # Should you change your keyboard layout some time, delete
@@ -981,7 +1274,7 @@ bar {
 #+END_SRC
 * mopidy
   :PROPERTIES:
-  :header-args: :tangle ~/.config/mopidy/mopidy.conf
+  :header-args: :tangle :mkdirp ~/.config/mopidy/mopidy.conf
   :END:
 #+BEGIN_SRC idk
 # For further information about options in this file see:
@@ -1156,7 +1449,7 @@ Logging in: you can asign this using your config file, but to do so manualy:
 
 ** config
   :PROPERTIES:
-  :header-args: :tangle ~/.irssi/config
+  :header-args: :tangle :mkdirp ~/.irssi/config
   :END:
 
 #+BEGIN_SRC idk
@@ -1471,7 +1764,7 @@ settings = {
 #+END_SRC
 * rtorrent
   :PROPERTIES:
-  :header-args: :tangle ~/.rtorrent.rc
+  :header-args: :tangle :mkdirp ~/.rtorrent.rc
   :END:
 
 #+BEGIN_SRC idk
