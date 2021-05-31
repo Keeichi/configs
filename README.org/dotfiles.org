@@ -1,0 +1,1691 @@
+#+title: Dotfiles
+
+WARNING: This readme is EXTREMELY long!
+I suggest clicking on a link below to navigate the page:
+
+<link 1> How to use this file
+<link 2> MPD
+<Link 3> NCMPCPP
+
+Note: need to get these links working across html, org, and gemini
+
+* How to use this file
+** What is this file used for?
+This file is written in what is called org-babel.
+The purpose of this file is that it can be used to configure your entire linux system, on all of your computers and servers, just by keeping this one file handy.
+** Commands:
+<s (tab) add new source code block
+C-c C-v t push all changes (or C-c C-v C-t)
+C-c ' (while in source block, see <s (tab) above ^^^) opens code block in mini buffer.
+
+** Helpful url links
+https://www.inmotionhosting.com/support/edu/emacs/create-dotfiles-with-emacs/
+* Emacs
+
+* MPD
+** Installation notes
+NOTE: Do not know if this is still the case. Regardless, I have it added to this file. If it gives you problems, then just remove it.
+don't add the mpd.db file yourself as mpd has a bug that will make it error.
+
+Just remove the file, start mpd, which will produce an error saying that the file does not exist, then start mpd again (command "mpd"). MPD will have created the file itself and will give you no further problems.
+
+** Config
+  :PROPERTIES:
+  :header-args: :tangle ~/.mpd/mpd.conf
+  :END:
+
+Main Configuration for mpd
+#+begin_src shell
+music_directory "/home/lain/Music/"
+playlist_directory "/home/lain/Music/"
+db_file "/home/lain/.mpd/mpd.db"
+log_file "/home/lain/.mpd/mpd.log"
+pid_file "/home/lain/.mpd/mpd.pid"
+state_file "/home/lain/.mpd/mpdstate"
+
+audio_output {
+	type "pulse"
+	name "pulse audio"
+}
+
+audio_output {
+    type                    "fifo"
+    name                    "my_fifo"
+    path                    "/tmp/mpd.fifo"
+    format                  "44100:16:2"
+}
+ 
+# bind_to_address "127.0.0.1"
+bind_to_address "localhost"
+port "6602"
+#+end_src
+
+** necessary text files
+*** database file
+Plain file for mpd to store it's database information
+  :PROPERTIES:
+  :header-args: :tangle ~/.mpd/mpd.db
+  :END:
+#+BEGIN_SRC shell
+
+#+END_SRC
+
+*** log file
+Plain file for mpd to store it's log information
+  :PROPERTIES:
+  :header-args: :tangle ~/.mpd/mpd.log
+  :END:
+#+BEGIN_SRC shell
+
+#+END_SRC
+
+*** pid file
+Plain file for mpd to store it's pid information (heck if I know what it does)
+  :PROPERTIES:
+  :header-args: :tangle ~/.mpd/mpd.pid
+  :END:
+#+BEGIN_SRC shell
+
+#+END_SRC
+
+*** State file
+Plain file for mpd to store it's current state
+  :PROPERTIES:
+  :header-args: :tangle ~/.mpd/mpdstate
+  :END:
+#+BEGIN_SRC shell
+
+#+END_SRC
+
+* Ncmpcpp
+** Config
+  :PROPERTIES:
+  :header-args: :tangle ~/.ncmpcpp/config
+  :END:
+
+#+BEGIN_SRC C
+% egrep -v '^#' .ncmpcpp/config
+
+mpd_music_dir = "~/Music/"
+# mpd_music_dir = "/home/lain/Music/"
+
+# new
+ncmpcpp_directory = "~/.config/.ncmpcpp"
+
+visualizer_in_stereo = "yes"
+
+# visualizer_data_source = "/tmp/mpd.fifo"
+# visualizer_fifo_path = "/tmp/mpd.fifo"
+
+visualizer_output_name = "my_fifo"
+visualizer_sync_interval = "30"
+visualizer_type = "spectrum"
+visualizer_look = "◆▋"
+message_delay_time = "3"
+playlist_shorten_total_times = "yes"
+playlist_display_mode = "columns"
+browser_display_mode = "columns"
+search_engine_display_mode = "columns"
+playlist_editor_display_mode = "columns"
+autocenter_mode = "yes"
+centered_cursor = "yes"
+
+# options are alternative or...
+user_interface = "alternative"
+
+follow_now_playing_lyrics = "yes"
+locked_screen_width_part = "60"
+display_bitrate = "yes"
+external_editor = "vim"
+use_console_editor = "yes"
+mpd_host = "localhost"
+mpd_port = "6602"
+mouse_list_scroll_whole_page = "yes"
+lines_scrolled = "1"
+# ask_before_clearing_main_playlist = "yes"
+enable_window_title = "yes"
+song_columns_list_format = "(25)[cyan]{a} (40)[]{f} (30)[red]{b} (7f)[green]{l}"
+
+# New - theme
+# empty_tag_color = magenta
+# main_window_color = white
+# progressbar_color = black:b
+# progressbar_elapsed_color = blue:b
+# statusbar_color = red
+# statusbar_time_color = cyan:b
+# header_window_color = "cyan"
+# volume_color = "red"
+# state_line_color = "yellow"
+# state_flags_color = "red"
+# progressbar_color = "yellow"
+# statusbar_color = "cyan"
+# visualizer_color = "red"
+
+# New - imported from luke smith
+ignore_leading_the = yes
+
+# Add Cover-Art
+# under ~/.ncmpcpp/config, add this line to run the script to generate the cover Picture:
+execute_on_song_change = "~/.ncmpcpp/art.sh"
+# Please note that both script art.sh and cover.sh needs to be copied over to your ~/.ncmpcpp folder
+
+###############################################################
+#Themes-Themes-Themes-Themes-Themes-Themes-Themes-Themes-Theme#
+###############################################################
+
+empty_tag_color = magenta
+main_window_color = white
+progressbar_color = black:b
+progressbar_elapsed_color = blue:b
+statusbar_color = "red"
+statusbar_time_color = cyan:b
+header_window_color = "cyan"
+volume_color = "red"
+state_line_color = "yellow"
+state_flags_color = "blue"
+# progressbar_color = "yellow"
+# statusbar_color = "cyan"
+visualizer_color = "red"
+#+END_SRC
+** Keybindings
+  :PROPERTIES:
+  :header-args: :tangle ~/.ncmpcpp/bindings
+  :END:
+#+BEGIN_SRC C
+##############################################################
+## This is the example bindings file. Copy it to            ##
+## ~/.ncmpcpp/bindings or $XDG_CONFIG_HOME/ncmpcpp/bindings ##
+## and set up your preferences                              ##
+##############################################################
+#
+#def_key "mouse"
+#  mouse_event
+#
+#def_key "up"
+#  scroll_up
+#
+#def_key "shift-up"
+#  select_item
+#  scroll_up
+#
+#def_key "down"
+#  scroll_down
+#
+#def_key "shift-down"
+#  select_item
+#  scroll_down
+#
+#def_key "["
+#  scroll_up_album
+#
+#def_key "]"
+#  scroll_down_album
+#
+#def_key "{"
+#  scroll_up_artist
+#
+#def_key "}"
+#  scroll_down_artist
+#
+#def_key "page_up"
+#  page_up
+#
+#def_key "page_down"
+#  page_down
+#
+#def_key "home"
+#  move_home
+#
+#def_key "end"
+#  move_end
+#
+#def_key "insert"
+#  select_item
+#
+#def_key "enter"
+#  enter_directory
+#
+#def_key "enter"
+#  toggle_output
+#
+#def_key "enter"
+#  run_action
+#
+#def_key "enter"
+#  play_item
+#
+#def_key "space"
+#  add_item_to_playlist
+#
+#def_key "space"
+#  toggle_lyrics_update_on_song_change
+#
+#def_key "space"
+#  toggle_visualization_type
+#
+#def_key "delete"
+#  delete_playlist_items
+#
+#def_key "delete"
+#  delete_browser_items
+#
+#def_key "delete"
+#  delete_stored_playlist
+#
+#def_key "right"
+#  next_column
+#
+#def_key "right"
+#  slave_screen
+#
+#def_key "right"
+#  volume_up
+#
+#def_key "+"
+#  volume_up
+#
+#def_key "left"
+#  previous_column
+#
+#def_key "left"
+#  master_screen
+#
+#def_key "left"
+#  volume_down
+#
+#def_key "-"
+#  volume_down
+#
+#def_key ":"
+#  execute_command
+#
+#def_key "tab"
+#  next_screen
+#
+#def_key "shift-tab"
+#  previous_screen
+#
+#def_key "f1"
+#  show_help
+#
+#def_key "1"
+#  show_playlist
+#
+#def_key "2"
+#  show_browser
+#
+#def_key "2"
+#  change_browse_mode
+#
+#def_key "3"
+#  show_search_engine
+#
+#def_key "3"
+#  reset_search_engine
+#
+#def_key "4"
+#  show_media_library
+#
+#def_key "4"
+#  toggle_media_library_columns_mode
+#
+#def_key "5"
+#  show_playlist_editor
+#
+#def_key "6"
+#  show_tag_editor
+#
+#def_key "7"
+#  show_outputs
+#
+#def_key "8"
+#  show_visualizer
+#
+#def_key "="
+#  show_clock
+#
+#def_key "@"
+#  show_server_info
+#
+#def_key "s"
+#  stop
+#
+#def_key "p"
+#  pause
+#
+#def_key ">"
+#  next
+#
+#def_key "<"
+#  previous
+#
+#def_key "ctrl-h"
+#  jump_to_parent_directory
+#
+#def_key "ctrl-h"
+#  replay_song
+#
+#def_key "backspace"
+#  jump_to_parent_directory
+#
+#def_key "backspace"
+#  replay_song
+#
+#def_key "f"
+#  seek_forward
+#
+#def_key "b"
+#  seek_backward
+#
+#def_key "r"
+#  toggle_repeat
+#
+#def_key "z"
+#  toggle_random
+#
+#def_key "y"
+#  save_tag_changes
+#
+#def_key "y"
+#  start_searching
+#
+#def_key "y"
+#  toggle_single
+#
+#def_key "R"
+#  toggle_consume
+#
+#def_key "Y"
+#  toggle_replay_gain_mode
+#
+#def_key "T"
+#  toggle_add_mode
+#
+#def_key "|"
+#  toggle_mouse
+#
+#def_key "#"
+#  toggle_bitrate_visibility
+#
+#def_key "Z"
+#  shuffle
+#
+#def_key "x"
+#  toggle_crossfade
+#
+#def_key "X"
+#  set_crossfade
+#
+#def_key "u"
+#  update_database
+#
+#def_key "ctrl-s"
+#  sort_playlist
+#
+#def_key "ctrl-s"
+#  toggle_browser_sort_mode
+#
+#def_key "ctrl-s"
+#  toggle_media_library_sort_mode
+#
+#def_key "ctrl-r"
+#  reverse_playlist
+#
+#def_key "ctrl-f"
+#  apply_filter
+#
+#def_key "ctrl-_"
+#  select_found_items
+#
+#def_key "/"
+#  find
+#
+#def_key "/"
+#  find_item_forward
+#
+#def_key "?"
+#  find
+#
+#def_key "?"
+#  find_item_backward
+#
+#def_key "."
+#  next_found_item
+#
+#def_key ","
+#  previous_found_item
+#
+#def_key "w"
+#  toggle_find_mode
+#
+#def_key "e"
+#  edit_song
+#
+#def_key "e"
+#  edit_library_tag
+#
+#def_key "e"
+#  edit_library_album
+#
+#def_key "e"
+#  edit_directory_name
+#
+#def_key "e"
+#  edit_playlist_name
+#
+#def_key "e"
+#  edit_lyrics
+#
+#def_key "i"
+#  show_song_info
+#
+#def_key "I"
+#  show_artist_info
+#
+#def_key "g"
+#  jump_to_position_in_song
+#
+#def_key "l"
+#  show_lyrics
+#
+#def_key "ctrl-v"
+#  select_range
+#
+#def_key "v"
+#  reverse_selection
+#
+#def_key "V"
+#  remove_selection
+#
+#def_key "B"
+#  select_album
+#
+#def_key "a"
+#  add_selected_items
+#
+#def_key "c"
+#  clear_playlist
+#
+#def_key "c"
+#  clear_main_playlist
+#
+#def_key "C"
+#  crop_playlist
+#
+#def_key "C"
+#  crop_main_playlist
+#
+#def_key "m"
+#  move_sort_order_up
+#
+#def_key "m"
+#  move_selected_items_up
+#
+#def_key "n"
+#  move_sort_order_down
+#
+#def_key "n"
+#  move_selected_items_down
+#
+#def_key "M"
+#  move_selected_items_to
+#
+#def_key "A"
+#  add
+#
+#def_key "S"
+#  save_playlist
+#
+#def_key "o"
+#  jump_to_playing_song
+#
+#def_key "G"
+#  jump_to_browser
+#
+#def_key "G"
+#  jump_to_playlist_editor
+#
+#def_key "~"
+#  jump_to_media_library
+#
+#def_key "E"
+#  jump_to_tag_editor
+#
+#def_key "U"
+#  toggle_playing_song_centering
+#
+#def_key "P"
+#  toggle_display_mode
+#
+#def_key "\\"
+#  toggle_interface
+#
+#def_key "!"
+#  toggle_separators_between_albums
+#
+#def_key "L"
+#  toggle_lyrics_fetcher
+#
+#def_key "F"
+#  fetch_lyrics_in_background
+#
+#def_key "alt-l"
+#  toggle_fetching_lyrics_in_background
+#
+#def_key "ctrl-l"
+#  toggle_screen_lock
+#
+#def_key "`"
+#  toggle_library_tag_type
+#
+#def_key "`"
+#  refetch_lyrics
+#
+#def_key "`"
+#  add_random_items
+#
+#def_key "ctrl-p"
+#  set_selected_items_priority
+#
+#def_key "q"
+#  quit
+#
+#
+#def_key "f"
+#	find
+#def_key "f"
+#	find_item_forward
+
+def_key "+"
+    show_clock
+def_key "="
+    volume_up
+
+def_key "j"
+    scroll_down
+def_key "k"
+    scroll_up
+
+def_key "ctrl-u"
+    page_up
+#push_characters "kkkkkkkkkkkkkkk"
+def_key "ctrl-d"
+    page_down
+#push_characters "jjjjjjjjjjjjjjj"
+def_key "u"
+    page_up
+#push_characters "kkkkkkkkkkkkkkk"
+def_key "d"
+    page_down
+#push_characters "jjjjjjjjjjjjjjj"
+def_key "h"
+    previous_column
+def_key "l"
+    next_column
+
+def_key "."
+    show_lyrics
+
+def_key "n"
+    next_found_item
+def_key "N"
+    previous_found_item
+
+# not used but bound
+def_key "J"
+    move_sort_order_down
+def_key "K"
+    move_sort_order_up
+def_key "h"
+  jump_to_parent_directory
+def_key "l"
+  enter_directory
+def_key "l"
+  run_action
+def_key "l"
+  play_item
+def_key "m"
+  show_media_library
+def_key "m"
+  toggle_media_library_columns_mode
+def_key "t"
+  show_tag_editor
+def_key "v"
+  show_visualizer
+def_key "G"
+  move_end
+def_key "g"
+  move_home
+#jump_to_position_in_song
+def_key "U"
+  update_database
+def_key "s"
+  reset_search_engine
+def_key "s"
+  show_search_engine
+def_key "f"
+  show_browser
+def_key "f"
+  change_browse_mode
+def_key "x"
+  delete_playlist_items
+def_key "P"
+  show_playlist
+
+
+# todo 
+# add shift j and shift k to move between view modes (originally keys 1 through 6) // or maybe set it to be volume up and down to match mpv?
+#+END_SRC
+* Xresources
+  :PROPERTIES:
+  :header-args: :tangle ~/.Xresources
+  :END:
+
+This file configures the low level settings of x-org, and is many programs use it to base their themes off of.
+#+BEGIN_SRC shell
+URxvt.font: xft:monospace:size=12
+URxvt.scrollBar: false
+
+! keybindings
+! switch fullscreen - per extention github, requires wmctrl to be downloaded from your package manager
+URxvt.keysym.C-j: perl:fullscreen:switch
+
+! make urls clickable
+URxvt.perl-ext-common: default,matcher,fullscreen
+URxvt.url-launcher: /usr/bin/xdg-open
+URxvt.matcher.button: 1
+
+! Make clickable urls blue (Currently disabled because it messes up the theme and doesnt allow white to be displayed as beige for some reason)
+! URxvt.matcher.rend.0: Uline Bold fg5
+
+
+! My attempt at the sweet -dark theme 
+! Primary
+
+! special (forground is beige, background navy blue, cursor navy blue)
+*.foreground:   #eec49a
+*.background:   #0a1124
+*.cursorColor:  #eec49a
+
+! black (actually navy blue)
+*.color0:       #0a1124
+*.color8:       #0a1124
+
+! red (More like orange)
+*.color1:       #f35645
+*.color9:       #f35645
+
+! green (Hot red)
+*.color2:       #eb3247
+*.color10:      #eb3247
+
+! yellow (pastel red)
+*.color3:       #bc4349
+*.color11:      #bc4349
+
+! blue (pastel blood-orange)
+*.color4:       #f35645
+*.color12:      #f35645
+
+! magenta (pastel orange)
+*.color5:       #f6a73b
+*.color13:      #f6a73b
+
+! cyan (pastel corn yellow)
+*.color6:       #fad32f
+*.color14:      #fad32f
+
+! white (beige)
+*.color7:       #eec49a
+*.color15:      #eec49a
+#+END_SRC
+* urxvt
+Urxvt is configured in your .xresources file.
+Once you are done making changes to the file, go to your home directory and enter:
+xrdb .Xresources
+to be update your urxvt settings.
+
+Store your plugins here:
+/urs/lib/urxvt/perl/
+
+just wget the script from the extention page
+
+* Xinit.rc
+  :PROPERTIES:
+  :header-args: :tangle ~/.xinitrc
+  :END:
+
+This file is loaded after x-org is loaded, it is used to start your window manager, set keybindings, set background wallpaper, etc
+
+#+BEGIN_SRC shell
+# xrandr -s 2560x1440
+feh --bg-scale ~/Pictures/Wallpapers/1464366.jpg
+# Hides the mouse cursor after 3 seconds of inactivity
+unlutter -idle 3 &
+#switch escape and capslock
+remove Lock = Caps_Lock
+keysym Caps_Lock = Escape
+cd ~/
+xrdb ~/.Xresources &
+# exec dwm > ~/.dwm.log
+exec i3
+#+END_SRC
+
+* Bash
+  :PROPERTIES:
+  :header-args: :tangle ~/.bashrc
+  :END:
+
+Configure mpc here
+#+BEGIN_SRC bash
+export MPD_HOST="localhost"
+export MPD_PORT="6602"
+#+END_SRC
+
+Set Default apps
+#+BEGIN_SRC bash
+#BROWSER=/usr/bin/qutebrowser
+#EDITOR=/usr/bin/emacs
+#+END_SRC
+
+Set Aliases
+#+BEGIN_SRC bash
+alias ff="emacs"
+alias yt="ytfzf -t"
+
+alias ..="cd .."
+alias ...="cd ../.."
+alias ....="cd ../../.."
+alias .....="cd ../../../.."
+alias ......="cd ../../../../.."
+alias .......="cd ../../../../../.."
+
+#+END_SRC
+* i3wm
+  :PROPERTIES:
+  :header-args: :tangle ~/.config/i3/config
+  :END:
+#+BEGIN_SRC idk
+# Should you change your keyboard layout some time, delete
+# this file and re-run i3-config-wizard(1).
+#
+
+# i3 config file (v4)
+#
+# Please see https://i3wm.org/docs/userguide.html for a complete reference!
+
+set $mod Mod4
+
+# Font for window titles. Will also be used by the bar unless a different font
+# is used in the bar {} block below.
+font pango:monospace 8
+
+# This font is widely installed, provides lots of unicode glyphs, right-to-left
+# text rendering and scalability on retina/hidpi displays (thanks to pango).
+#font pango:DejaVu Sans Mono 8
+
+# Before i3 v4.8, we used to recommend this one as the default:
+# font -misc-fixed-medium-r-normal--13-120-75-75-C-70-iso10646-1
+# The font above is very space-efficient, that is, it looks good, sharp and
+# clear in small sizes. However, its unicode glyph coverage is limited, the old
+# X core fonts rendering does not support right-to-left and this being a bitmap
+# font, it doesn’t scale on retina/hidpi displays.
+
+# Use Mouse+$mod to drag floating windows to their wanted position
+floating_modifier $mod
+
+# start a terminal
+bindsym $mod+Return exec i3-sensible-terminal
+
+# kill focused window
+bindsym $mod+q kill
+
+# start surfraw in dmenu
+# We can make surf browser mimic qutebrowser bindings here: have o in surf open surf patch search, while $Mod+o do this:
+bindsym $mod+o exec sr $(sr -elvi | gawk'{ print$1 }' | dmenu -p search )
+
+# start dmenu (a program launcher)
+bindsym $mod+space exec dmenu_run
+# There also is the (new) i3-dmenu-desktop which only displays applications
+# shipping a .desktop file. It is a wrapper around dmenu, so you need that
+# installed.
+# bindsym $mod+space exec --no-startup-id i3-dmenu-desktop
+
+# change focus
+bindsym $mod+h focus left
+bindsym $mod+j focus down
+bindsym $mod+k focus up
+bindsym $mod+l focus right
+
+# alternatively, you can use the cursor keys:
+bindsym $mod+Left focus left
+bindsym $mod+Down focus down
+bindsym $mod+Up focus up
+bindsym $mod+Right focus right
+
+# move focused window
+bindsym $mod+Shift+h move left
+bindsym $mod+Shift+j move down
+bindsym $mod+Shift+k move up
+bindsym $mod+Shift+l move right
+
+# alternatively, you can use the cursor keys:
+bindsym $mod+Shift+Left move left
+bindsym $mod+Shift+Down move down
+bindsym $mod+Shift+Up move up
+bindsym $mod+Shift+Right move right
+
+# split in horizontal orientation
+bindsym $mod+n split h
+
+# split in vertical orientation
+bindsym $mod+v split v
+
+# enter fullscreen mode for the focused container
+bindsym $mod+f fullscreen toggle
+
+# change container layout (stacked, tabbed, toggle split)
+bindsym $mod+s layout stacking
+bindsym $mod+t layout tabbed
+bindsym $mod+w layout toggle split
+
+# toggle tiling / floating
+bindsym $mod+Shift+space floating toggle
+
+# change focus between tiling / floating windows
+bindsym $mod+b focus mode_toggle
+
+# focus the parent container
+bindsym $mod+a focus parent
+
+# focus the child container
+#bindsym $mod+d focus child
+
+# Define names for default workspaces for which we configure key bindings later on.
+# We use variables to avoid repeating the names in multiple places.
+set $ws1 "1"
+set $ws2 "2"
+set $ws3 "3"
+set $ws4 "4"
+set $ws5 "5"
+set $ws6 "6"
+set $ws7 "7"
+set $ws8 "8"
+set $ws9 "9"
+set $ws10 "10"
+
+# switch to workspace
+bindsym $mod+1 workspace $ws1
+bindsym $mod+2 workspace $ws2
+bindsym $mod+3 workspace $ws3
+bindsym $mod+4 workspace $ws4
+bindsym $mod+5 workspace $ws5
+bindsym $mod+6 workspace $ws6
+bindsym $mod+7 workspace $ws7
+bindsym $mod+8 workspace $ws8
+bindsym $mod+9 workspace $ws9
+bindsym $mod+0 workspace $ws10
+
+# move focused container to workspace
+bindsym $mod+Shift+1 move container to workspace $ws1
+bindsym $mod+Shift+2 move container to workspace $ws2
+bindsym $mod+Shift+3 move container to workspace $ws3
+bindsym $mod+Shift+4 move container to workspace $ws4
+bindsym $mod+Shift+5 move container to workspace $ws5
+bindsym $mod+Shift+6 move container to workspace $ws6
+bindsym $mod+Shift+7 move container to workspace $ws7
+bindsym $mod+Shift+8 move container to workspace $ws8
+bindsym $mod+Shift+9 move container to workspace $ws9
+bindsym $mod+Shift+0 move container to workspace $ws10
+
+# reload the configuration file
+bindsym $mod+Shift+c reload
+# restart i3 inplace (preserves your layout/session, can be used to upgrade i3)
+bindsym $mod+Shift+r restart
+# exit i3 (logs you out of your X session)
+bindsym $mod+Shift+e exec "i3-nagbar -t warning -m 'You pressed the exit shortcut. Do you really want to exit i3? This will end your X session.' -b 'Yes, exit i3' 'i3-msg exit'"
+
+# resize window (you can also use the mouse for that)
+mode "resize" {
+        # These bindings trigger as soon as you enter the resize mode
+
+        # Pressing left will shrink the window’s width.
+        # Pressing right will grow the window’s width.
+        # Pressing up will shrink the window’s height.
+        # Pressing down will grow the window’s height.
+        bindsym j resize shrink width 10 px or 10 ppt
+        bindsym k resize grow height 10 px or 10 ppt
+        bindsym l resize shrink height 10 px or 10 ppt
+        bindsym semicolon resize grow width 10 px or 10 ppt
+
+        # same bindings, but for the arrow keys
+        bindsym Left resize shrink width 10 px or 10 ppt
+        bindsym Down resize grow height 10 px or 10 ppt
+        bindsym Up resize shrink height 10 px or 10 ppt
+        bindsym Right resize grow width 10 px or 10 ppt
+
+        # back to normal: Enter or Escape or $mod+r
+        bindsym Return mode "default"
+        bindsym Escape mode "default"
+        bindsym $mod+r mode "default"
+}
+
+bindsym $mod+y exec "ytfzf -D"
+bindsym $mod+r mode "resize"
+
+# Start i3bar to display a workspace bar (plus the system information i3status
+# finds out, if available)
+bar {
+        status_command i3status
+}
+#+END_SRC
+* mopidy
+  :PROPERTIES:
+  :header-args: :tangle ~/.config/mopidy/mopidy.conf
+  :END:
+#+BEGIN_SRC idk
+# For further information about options in this file see:
+#   https://docs.mopidy.com/
+#
+# The initial commented out values reflect the defaults as of:
+#   Mopidy 3.1.1
+#   Mopidy-File 3.1.1
+#   Mopidy-HTTP 3.1.1
+#   Mopidy-M3U 3.1.1
+#   Mopidy-SoftwareMixer 3.1.1
+#   Mopidy-Stream 3.1.1
+#
+# Available options and defaults might have changed since then,
+# run `mopidy config` to see the current effective config and
+# `mopidy --version` to check the current version.
+
+[core]
+#cache_dir = $XDG_CACHE_DIR/mopidy
+#config_dir = $XDG_CONFIG_DIR/mopidy
+#data_dir = $XDG_DATA_DIR/mopidy
+#max_tracklist_length = 10000
+#restore_state = false
+
+[logging]
+#verbosity = 0
+#format = %(levelname)-8s %(asctime)s [%(process)d:%(threadName)s] %(name)s\n  %(message)s
+#color = true
+#config_file =
+
+[audio]
+#mixer = software
+#mixer_volume = 
+#output = autoaudiosink
+#buffer_time = 
+
+[proxy]
+#scheme = 
+#hostname = 
+#port = 
+#username = 
+#password = 
+
+[file]
+#enabled = true
+#media_dirs = 
+#  $XDG_MUSIC_DIR|Music
+#  ~/|Home
+#excluded_file_extensions = 
+#  .directory
+#  .html
+#  .jpeg
+#  .jpg
+#  .log
+#  .nfo
+#  .pdf
+#  .png
+#  .txt
+#  .zip
+#show_dotfiles = false
+#follow_symlinks = false
+#metadata_timeout = 1000
+
+[http]
+#enabled = true
+#hostname = 127.0.0.1
+#port = 6680
+#zeroconf = Mopidy HTTP server on $hostname
+#allowed_origins = 
+#csrf_protection = true
+#default_app = mopidy
+
+[m3u]
+#enabled = true
+#base_dir = $XDG_MUSIC_DIR
+#default_encoding = latin-1
+#default_extension = .m3u8
+#playlists_dir =
+
+[softwaremixer]
+#enabled = true
+
+[stream]
+#enabled = true
+#protocols = 
+#  http
+#  https
+#  mms
+#  rtmp
+#  rtmps
+#  rtsp
+#metadata_blacklist = 
+#timeout = 5000
+#+END_SRC
+* irssi
+** channels to visit
+jpopsuki
+Server: irc.synirc.net/jpopsuki
+port: 6667
+Channels: #jpopsuki, #jpopsuki-support
+
+wanikani
+Server: Rizon
+Channel: #wanikani
+
+Anki
+Server: Freenode
+Channel: #anki
+Note: Unofficial jp-only WK chat
+
+use https://netsplit.de/channels/popular.php for search for channels to join
+
+Snoonet
+irc.snoonet.org
+port (ssl): 6697
+
+** how to use irc
+connect to a server
+/connect chat.freenode.net
+
+join a channel (channels usually start with # symbol)
+/join #ubuntu
+
+jump between channels:
+each channel you join will be assigned a number, starting at 1 and adding +1 additionally,
+use alt-# (as in alt-4) to make the jump
+
+how to private message someone:
+/msg user-name message
+
+
+### administrator commands
+kick someone out of the chat
+/kick user-name
+
+ban someone from the chat
+/ban user-name
+
+
+
+#### THEMING
+by default uses your .Xresources colors
+can also be placed alongside your config file in a file named default.theme
+
+
+#### FREENODE ####
+
+An "account" is your persistent identity
+a "nickname" is your current display name and can be owned by an account
+to "identify" means to log into your account
+"NickServ" is a freenode service that behaves like a user (which you can send private messages to)
+To switch to your desired nickname
+/nick your-new-nickname
+
+To Register your nickname with freenode:
+/msg NickServ REGISTER password email@email.com
+Failure to verify your email address will cause it to drop within 24 hours
+
+
+How to get multiple nicknames under one login
+/nick your-nick-2
+Then
+/msg NickServ IDENTIFY your-nick-2 password
+and finally, group the new nick to your account
+/msg your-new-nickname GROUP
+
+Keep your nicks under the same log-in but put bots under a seperate log-in altogether.
+
+
+Logging in: you can asign this using your config file, but to do so manualy:
+/connect chat.freenode.net 6667 your-nick:your-password
+
+** config
+  :PROPERTIES:
+  :header-args: :tangle ~/.irssi/config
+  :END:
+
+#+BEGIN_SRC idk
+servers = (
+  { address = "irc.dal.net"; chatnet = "DALnet"; port = "6667"; },
+  {
+    address = "ssl.efnet.org";
+    chatnet = "EFNet";
+    port = "9999";
+    use_tls = "yes";
+  },
+  {
+    address = "irc.esper.net";
+    chatnet = "EsperNet";
+    port = "6697";
+    use_tls = "yes";
+    tls_verify = "yes";
+  },
+  {
+    address = "chat.freenode.net";
+    chatnet = "Freenode";
+    autoconnect = "yes";
+    password = "Canti:R0b0-T3ch";
+    port = "6697";
+    use_tls = "yes";
+    tls_verify = "yes";
+  },
+  {
+    address = "irc.gamesurge.net";
+    chatnet = "GameSurge";
+    port = "6667";
+  },
+  {
+    address = "eu.irc6.net";
+    chatnet = "IRCnet";
+    port = "6667";
+    use_tls = "yes";
+  },
+  { address = "open.ircnet.net"; chatnet = "IRCnet"; port = "6667"; },
+  {
+    address = "irc.ircsource.net";
+    chatnet = "IRCSource";
+    port = "6667";
+  },
+  { address = "irc.netfuze.net"; chatnet = "NetFuze"; port = "6667"; },
+  {
+    address = "irc.oftc.net";
+    chatnet = "OFTC";
+    port = "6697";
+    use_tls = "yes";
+    tls_verify = "yes";
+  },
+  { 
+    address = "irc.quakenet.org";
+    chatnet = "QuakeNet";
+    port = "6667";
+  },
+  {
+    address = "irc.rizon.net";
+    chatnet = "Rizon";
+    port = "6697";
+    use_tls = "yes";
+    tls_verify = "yes";
+  },
+  { address = "silc.silcnet.org"; chatnet = "SILC"; port = "706"; },
+  { 
+    address = "irc.undernet.org";
+    chatnet = "Undernet";
+    port = "6667";
+  }
+);
+
+chatnets = {
+  DALnet = {
+    type = "IRC";
+    max_kicks = "4";
+    max_msgs = "20";
+    max_whois = "30";
+  };
+  EFNet = { 
+    type = "IRC";
+    max_kicks = "1";
+    max_msgs = "4";
+    max_whois = "1";
+  };
+  EsperNet = {
+    type = "IRC";
+    max_kicks = "1";
+    max_msgs = "4";
+    max_whois = "1";
+  };
+  Freenode = {
+    type = "IRC";
+    max_kicks = "1";
+    max_msgs = "4";
+    max_whois = "1";
+  };
+  GameSurge = {
+    type = "IRC";
+    max_kicks = "1";
+    max_msgs = "1";
+    max_whois = "1";
+  };
+  IRCnet = { 
+    type = "IRC";
+    max_kicks = "1";
+    max_msgs = "1";
+    max_whois = "1";
+  };
+  IRCSource = {
+    type = "IRC";
+    max_kicks = "1";
+    max_msgs = "4";
+    max_whois = "1";
+  };
+  NetFuze = {
+    type = "IRC";
+    max_kicks = "1";
+    max_msgs = "1";
+    max_whois = "1";
+  };
+  OFTC = { type = "IRC"; max_kicks = "1"; max_msgs = "1"; max_whois = "1"; };
+  QuakeNet = {
+    type = "IRC";
+    max_kicks = "1";
+    max_msgs = "1";
+    max_whois = "1";
+  };
+  Rizon = { 
+    type = "IRC";
+    max_kicks = "1";
+    max_msgs = "1";
+    max_whois = "1";
+  };
+  SILC = { type = "SILC"; };
+  Undernet = {
+    type = "IRC";
+    max_kicks = "1";
+    max_msgs = "1";
+    max_whois = "1";
+  };
+};
+
+channels = (
+  { name = "#lobby"; chatnet = "EsperNet"; autojoin = "No"; },
+  { name = "#freenode"; chatnet = "Freenode"; autojoin = "No"; },
+  { name = "#irssi"; chatnet = "Freenode"; autojoin = "No"; },
+  { name = "#gamesurge"; chatnet = "GameSurge"; autojoin = "No"; },
+  { name = "#irssi"; chatnet = "IRCNet"; autojoin = "No"; },
+  { name = "#ircsource"; chatnet = "IRCSource"; autojoin = "No"; },
+  { name = "#netfuze"; chatnet = "NetFuze"; autojoin = "No"; },
+  { name = "#oftc"; chatnet = "OFTC"; autojoin = "No"; },
+  { name = "silc"; chatnet = "SILC"; autojoin = "No"; }
+);
+
+aliases = {
+  ATAG = "WINDOW SERVER";
+  ADDALLCHANS = "SCRIPT EXEC foreach my \\$channel (Irssi::channels()) { Irssi::command(\"CHANNEL ADD -auto \\$channel->{name} \\$channel->{server}->{tag} \\$channel->{key}\")\\;}";
+  B = "BAN";
+  BACK = "AWAY";
+  BANS = "BAN";
+  BYE = "QUIT";
+  C = "CLEAR";
+  CALC = "EXEC - if command -v bc >/dev/null 2>&1\\; then printf '%s=' '$*'\\; echo '$*' | bc -l\\; else echo bc was not found\\; fi";
+  CHAT = "DCC CHAT";
+  DATE = "TIME";
+  DEHIGHLIGHT = "DEHILIGHT";
+  DESCRIBE = "ACTION";
+  DHL = "DEHILIGHT";
+  EXEMPTLIST = "MODE $C +e";
+  EXIT = "QUIT";
+  GOTO = "SCROLLBACK GOTO";
+  HIGHLIGHT = "HILIGHT";
+  HL = "HILIGHT";
+  HOST = "USERHOST";
+  INVITELIST = "MODE $C +I";
+  J = "JOIN";
+  K = "KICK";
+  KB = "KICKBAN";
+  KN = "KNOCKOUT";
+  LAST = "LASTLOG";
+  LEAVE = "PART";
+  M = "MSG";
+  MUB = "UNBAN *";
+  N = "NAMES";
+  NMSG = "^MSG";
+  P = "PART";
+  Q = "QUERY";
+  RESET = "SET -default";
+  RUN = "SCRIPT LOAD";
+  SAY = "MSG *";
+  SB = "SCROLLBACK";
+  SBAR = "STATUSBAR";
+  SIGNOFF = "QUIT";
+  SV = "MSG * Irssi $J ($V) - https://irssi.org";
+  T = "TOPIC";
+  UB = "UNBAN";
+  UMODE = "MODE $N";
+  UNSET = "SET -clear";
+  W = "WHO";
+  WC = "WINDOW CLOSE";
+  WG = "WINDOW GOTO";
+  WJOIN = "JOIN -window";
+  WI = "WHOIS";
+  WII = "WHOIS $0 $0";
+  WL = "WINDOW LIST";
+  WN = "WINDOW NEW HIDDEN";
+  WQUERY = "QUERY -window";
+  WW = "WHOWAS";
+};
+
+statusbar = {
+
+  items = {
+
+    barstart = "{sbstart}";
+    barend = "{sbend}";
+
+    topicbarstart = "{topicsbstart}";
+    topicbarend = "{topicsbend}";
+
+    time = "{sb $Z}";
+    user = "{sb {sbnickmode $cumode}$N{sbmode $usermode}{sbaway $A}}";
+
+    window = "{sb $winref:$tag/$itemname{sbmode $M}}";
+    window_empty = "{sb $winref{sbservertag $tag}}";
+
+    prompt = "{prompt $[.15]itemname}";
+    prompt_empty = "{prompt $winname}";
+
+    topic = " $topic";
+    topic_empty = " Irssi v$J - https://irssi.org";
+
+    lag = "{sb Lag: $0-}";
+    act = "{sb Act: $0-}";
+    more = "-- more --";
+  };
+
+  default = {
+
+    window = {
+
+      disabled = "no";
+      type = "window";
+      placement = "bottom";
+      position = "1";
+      visible = "active";
+
+      items = {
+        barstart = { priority = "100"; };
+        time = { };
+        user = { };
+        window = { };
+        window_empty = { };
+        lag = { priority = "-1"; };
+        act = { priority = "10"; };
+        more = { priority = "-1"; alignment = "right"; };
+        barend = { priority = "100"; alignment = "right"; };
+      };
+    };
+
+    window_inact = {
+
+      type = "window";
+      placement = "bottom";
+      position = "1";
+      visible = "inactive";
+
+      items = {
+        barstart = { priority = "100"; };
+        window = { };
+        window_empty = { };
+        more = { priority = "-1"; alignment = "right"; };
+        barend = { priority = "100"; alignment = "right"; };
+      };
+    };
+
+    prompt = {
+
+      type = "root";
+      placement = "bottom";
+      position = "100";
+      visible = "always";
+
+      items = {
+        prompt = { priority = "-1"; };
+        prompt_empty = { priority = "-1"; };
+        input = { priority = "10"; };
+      };
+    };
+
+    topic = {
+
+      type = "root";
+      placement = "top";
+      position = "1";
+      visible = "always";
+
+      items = {
+        topicbarstart = { priority = "100"; };
+        topic = { };
+        topic_empty = { };
+        topicbarend = { priority = "100"; alignment = "right"; };
+      };
+    };
+  };
+};
+settings = {
+  core = { real_name = "lain"; user_name = "lain"; nick = "lain"; };
+  "fe-text" = { actlist_sort = "refnum"; };
+};
+#+END_SRC
+* rtorrent
+  :PROPERTIES:
+  :header-args: :tangle ~/.rtorrent.rc
+  :END:
+
+#+BEGIN_SRC idk
+##################
+# Ratio Settings #
+##################
+
+# The values for the following options are dependent on the system's hardware and insternet connection speed
+throttle.min_peers.normal.set = 40
+throttle.max_peers.normal.set = 52
+
+throttle.min_peers.seed.set = 10
+throttle.max_peers.seed.set = 52
+
+throttle.max_uploads.set = 8
+
+throttle.global_down.max_rate.set = 200
+throttle.global_up.max_rate.set = 28
+
+# The following line executes a hash check when rTorret is started. It checks for errors in your completed files.
+pieces.hash.on_completion.set = yes
+
+#######################
+# File Save Locations #
+#######################
+
+# Where to save files to
+directory.default.set = ~/Downloads/torrents/
+
+# This file allows rtorrent to save the progress of torrents, HIGHLY recommended to be stored in your home directory.
+session.path.set = ~/.rtorrent.session
+
+
+###################
+# Watched Folders #
+###################
+
+# Set a watched-folder. When torrent files are saved to this directory, they will automatically start downloading. Also, be careful when using this option as rTorrent will move the torrent file to your session folder and rename it to it's hash value.
+schedule2 = watch_directory,5,5,load.start=~/Downloads/*.torrent
+schedule2 = untied_directory,5,5,stop_untied=
+schedule2 = tied_directory,5,5,start_tied=
+
+# The follwing schedule2 option is intended to stop rTorrent from downloading data when disk space is low.
+schdule2 = low_diskspace,5,60,((close_low_diskspace,100M))
+
+######################
+# Port Configuration #
+######################
+
+# The following option sets which port(s) to use for listening. It is recommended to use a port that is higher than 49152. Although rTorrent allows for a range of ports, a single port is recommended.
+network.port_range.set = 49164-49164
+
+#######################
+# Additional Settings #
+#######################
+
+# The protocol.encryption.set option enables or disables encryption. It is very important to enable this option, not only for yourself, but also for your peers in the torrent swarm. Some users need to obscure their bandwidth usage from their ISP and it does not hurt to enable it even if you do not need the added security.
+protocol.encryption.set = allow_incoming,try_outgoing,enable_retry
+
+# Force all connections to use encryption. Note that this will reduce your client's availability.
+protocol.encryption.set = require,require_RC4_incoming,try_outgoing
+
+#### Typo ###
+# 4 lines down, archwiki has it listed as: protocol.pex.set= yes ### Probable just a typo but check it out anyways
+
+# Enable DHT support, which is common with public trackers and will allow your client to acquire more peers.
+dht.mode.set = auto
+dht.port.set = 6881
+protocol.pex.set = yes
+
+
+#+END_SRC
+* surfraw
+  :PROPERTIES:
+  :header-args: :tangle ~/.surfraw.conf
+  :END:
+
+#+BEGIN_SRC bash
+SURFRAW_graphical_browser=/usr/local/bin/surf
+#SURFRAW_text_browser=/usr/bin/lynx
+SURFRAW_graphical=yes
+#+END_SRC
+* Themes
+** Sweet
+this is just a list of colors that the sweetified-dark theme uses
+# Custom colorscheme fitting Sweetified theme
+colors:
+  primary:
+    background: '0x0a1124'
+    foreground: '0xeec49a'
+  cursor:
+    text:       '0x0a1124'
+    cursor:     '0xeec49a'
+  normal:
+    black:      '0x0a1124'
+    red:        '0x5F4149'
+    green:      '0xEB3247'
+    yellow:     '0xBC4349'
+    blue:       '0xF35645'
+    magenta:    '0xF6A73B'
+    cyan:       '0xFAD32F'
+    white:      '0xeec49a'
+  bright:
+    black:      '0xa6896b'
+    red:        '0x5F4149'
+    green:      '0xEB3247'
+    yellow:     '0xBC4349'
+    blue:       '0xF35645'
+    magenta:    '0xF6A73B'
+    cyan:       '0xFAD32F'
+    white:      '0xeec49a'
+* newsboat
+** config
+  :PROPERTIES:
+  :header-args: :tangle ~/.newsboat/config
+  :END:
+#+BEGIN_SRC idk
+# Automatically reload all feeds on startup
+auto-reload yes
+
+# Automatically reload feeds periodically, like every 60 minuters for instance. Example: reload-time <number of minutes>
+reload-time <60>
+
+# Load feeds in parallel for faster updates. if you put this on, newsboat will not update url entries in sequence, but will update them n at a time, in parallel.
+reload-threads 100
+
+external-url-viewer "urlscan -dc -r 'linkhandler{}'"
+
+####################
+# Url passthroughs #
+####################
+
+# Pass url to external command:
+# by default, allows one to pass url to an external command. The idea is to use a macro to set the browser that Newsboat opens the article with to the path of some other command and then change it back afterwards.
+
+# open youtube videos with mpv: 
+macro y set browser "mpv %u" ; open-in-browser "elinks %u"
+
+# Note: press the , key followed by the keybind to use the macro. Example for youtube: "," and then "y"
+
+browser linkhandler
+macro , open-in-browser
+macro t set browser "qndl" ; open-in-browser ; set browser linkhandler
+macro a set browser "tsp youtube-dl --add-metadata -xic -f bestaudio/best" ; open-in-browser ; set browser linkhandler
+macro v set browser "setsid -f mpv" ; open-in-browser ; set browser linkhandler
+macro w set browser "w3m" ; open-in-browser ; set browser linkhandler
+macro d set browser "dmenuhandler" ; open-in-browser ; set-browser linkhandler
+###############
+# Keybindings #
+###############
+
+bind-key j down
+bind-key k up
+bind-key j next articlelist
+bind-key k prev articlelist
+bind-key J next-feed articlelist
+bind-key K prev-feed articlelist
+bind-key G end
+bind-key g home
+bind-key d pagedown
+bind-key u pageup
+bind-key l open
+bind-key h quit
+bind-key a toggle-article-read
+bind-key n next-unread
+bind-key N prev-unread
+bind-key D pb-download
+bind-key U show-urls
+bind-key x pb-delete
+
+#########
+# Theme #
+#########
+
+color listnormal cyan default
+color listfocus black yellow standout bold
+color listnormal_unread blue default
+color listfocus_unread yellow default bold
+color info red black bold
+color article white default bold
+
+#+END_SRC
+
+** urls
+  :PROPERTIES:
+  :header-args: :tangle ~/.newsboat/urls
+  :END:
+#+BEGIN_SRC idk
+# http://username:password@hostname.domain.tld/fee.rss "~Feed title here" tag1 tag2 tag3 !hidden-feed
+
+# Luke Smith Blog
+https://lukesmith.xyz/rss.xml "~Luke Smith Blog" blogs tech
+# Luke Smith Videos
+https://videos.lukesmith.xyz/feeds/videos.xml?videoChannelId=2 "~Luke Smith Peertube" peertube videos
+# Luke Smith podcast
+https://notrelated.libsyn.com/rss "~Luke Smith Podcast" podcasts
+
+# Taylor Marshall Videos
+https://www.youtube.com/feeds/videos.xml?channel_id=UCeJGHnaPVxYr7z55VF4YmPg "~Taylor Marshall Videos" catholic videos youtube
+
+# Timothy Gordon Videos
+https://www.youtube.com/feeds/videos.xml?channel_id=UCu3jDGYr-BHurx6mNFGto_A "~Timothy Gordon Videos" catholic videos youtube
+
+# SSPX Videos
+https://www.youtube.com/feeds/videos.xml?channel_id=UCTvY1fvpD7jnT-uKEyuTSaw "~SSPX Videos" catholic videos youtube
+
+# Church Militant Videos
+https://www.youtube.com/feeds/videos.xml?channel_id=UCX17igkZ9JhU64JoTBVSWeQ "~Church Militant Videos" catholic videos youtube
+
+# Mental Outlaw Videos
+https://www.youtube.com/feeds/videos.xml?channel_id=UC7YOGHUfC1Tb6E4pudI9STA "~Mental Outlaw videos" tech videos youtube
+
+# Distrotube 
+# Need to convert to odyssey using rss-bridge once I have it up on vps
+https://www.youtube.com/feeds/videos.xml?channel_id=UCVls1GmFKf6WlTraIb_IaJg "~Distro-tube Videos" tech videos youtube
+
+#+END_SRC
