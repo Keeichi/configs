@@ -35,7 +35,8 @@ Lets Start with some sensible defaults
 
 ;; make eshell the default buffer when opening emacs
 ;; (setq initial-buffer-choice 'eshell-new)
-(setq initial-buffer-choice 'eshell-new)
+;; (setq initial-buffer-choice 'eshell-new)
+(setq initial-buffer-choice 'eshell)
 
 ;; set line highlight mode in gui mode only
 (when window-system (global-hl-line-mode t))
@@ -105,7 +106,7 @@ This is all kinds of necessary for setting up configs
 ** Configured-Packages
 *** which-key
   :PROPERTIES:
-  :header-args: :tangle ~/.emacs.d/init.el
+  :header-args: :tangle :mkdirp ~/.emacs.d/init.el
   :END:
 #+BEGIN_SRC emacs-lisp
 (use-package which-key)
@@ -113,7 +114,7 @@ This is all kinds of necessary for setting up configs
 
 *** Doom-modeline
   :PROPERTIES:
-  :header-args: :tangle :mkdirp ~/.emacs.d/init.el
+  :header-args: :tangle ~/.emacs.d/init.el
   :END:
 #+BEGIN_SRC emacs-lisp
 (use-package doom-modeline
@@ -125,7 +126,7 @@ This is all kinds of necessary for setting up configs
 
 *** all-the-icons
   :PROPERTIES:
-  :header-args: :tangle :mkdirp ~/.emacs.d/init.el
+  :header-args: :tangle ~/.emacs.d/init.el
   :END:
 Some nice icons for doom modeline
 NOTE: first time using this computer, use command "all-the-icons-install-fonts" to install it on your pc"
@@ -134,7 +135,7 @@ NOTE: first time using this computer, use command "all-the-icons-install-fonts" 
 #+END_SRC
 *** ivy
   :PROPERTIES:
-  :header-args: :tangle :mkdirp ~/.emacs.d/init.el
+  :header-args: :tangle ~/.emacs.d/init.el
   :END:
 #+BEGIN_SRC emacs-lisp
 (use-package ivy
@@ -158,14 +159,14 @@ NOTE: first time using this computer, use command "all-the-icons-install-fonts" 
 
 *** counsel
   :PROPERTIES:
-  :header-args: :tangle :mkdirp ~/.emacs.d/init.el
+  :header-args: :tangle ~/.emacs.d/init.el
   :END:
 #+BEGIN_SRC emacs-lisp
 (use-package counsel)
 #+END_SRC
 *** magit
   :PROPERTIES:
-  :header-args: :tangle :mkdirp ~/.emacs.d/init.el
+  :header-args: :tangle ~/.emacs.d/init.el
   :END:
 #+BEGIN_SRC emacs-lisp
 (use-package magit
@@ -178,7 +179,7 @@ NOTE: first time using this computer, use command "all-the-icons-install-fonts" 
 #+END_SRC
 *** elpher (gemini client)
   :PROPERTIES:
-  :header-args: :tangle :mkdirp ~/.emacs.d/init.el
+  :header-args: :tangle ~/.emacs.d/init.el
   :END:
 #+BEGIN_SRC emacs-lisp
 (use-package elpher)
@@ -187,7 +188,7 @@ NOTE: first time using this computer, use command "all-the-icons-install-fonts" 
 *** eshell
 **** set alias file
   :PROPERTIES:
-  :header-args: :tangle :mkdirp ~/.emacs.d/init.el
+  :header-args: :tangle ~/.emacs.d/init.el
   :END:
 #+BEGIN_SRC emacs-lisp
 (setq eshell-aliases-file "~/.emacs.d/eshell/alias")
@@ -195,7 +196,7 @@ NOTE: first time using this computer, use command "all-the-icons-install-fonts" 
 
 **** new eshell buffer seperate from the last one
   :PROPERTIES:
-  :header-args: :tangle :mkdirp ~/.emacs.d/init.el
+  :header-args: :tangle ~/.emacs.d/init.el
   :END:
 #+BEGIN_SRC emacs-lisp
 (defun eshell-new()
@@ -206,7 +207,7 @@ NOTE: first time using this computer, use command "all-the-icons-install-fonts" 
 
 **** set performance variables
   :PROPERTIES:
-  :header-args: :tangle :mkdirp ~/.emacs.d/init.el
+  :header-args: :tangle ~/.emacs.d/init.el
   :END:
 #+BEGIN_SRC emacs-lisp
 (defun efs/configure-eshell ()
@@ -226,7 +227,7 @@ NOTE: first time using this computer, use command "all-the-icons-install-fonts" 
 
 **** eshell-git-prompt
   :PROPERTIES:
-  :header-args: :tangle :mkdirp ~/.emacs.d/init.el
+  :header-args: :tangle ~/.emacs.d/init.el
   :END:
 #+BEGIN_SRC emacs-lisp
 (use-package eshell-git-prompt)
@@ -234,7 +235,7 @@ NOTE: first time using this computer, use command "all-the-icons-install-fonts" 
 
 **** main eshell config
   :PROPERTIES:
-  :header-args: :tangle :mkdirp ~/.emacs.d/init.el
+  :header-args: :tangle ~/.emacs.d/init.el
   :END:
 #+BEGIN_SRC emacs-lisp
   (use-package eshell
@@ -256,7 +257,7 @@ NOTE: first time using this computer, use command "all-the-icons-install-fonts" 
 
 *** eww-lnum
   :PROPERTIES:
-  :header-args: :tangle :mkdirp ~/.emacs.d/init.el
+  :header-args: :tangle ~/.emacs.d/init.el
   :END:
 Adds link following to eww (qutebrowser style)
 #+BEGIN_SRC emacs-lisp
@@ -264,7 +265,7 @@ Adds link following to eww (qutebrowser style)
 #+END_SRC
 *** w3m
   :PROPERTIES:
-  :header-args: :tangle :mkdirp ~/.emacs.d/init.el
+  :header-args: :tangle ~/.emacs.d/init.el
   :END:
 #+BEGIN_SRC emacs-lisp
 (use-package w3m)
@@ -272,10 +273,10 @@ Adds link following to eww (qutebrowser style)
 #+END_SRC
 
 *** emms
-  :PROPERTIES:
-  :header-args: :tangle :mkdirp ~/.emacs.d/init.el
-  :END:
-#+BEGIN_SRC emacs-lisp
+/  :PROPERTIES:
+/  :header-args: :tangle ~/.emacs.d/init.el
+/  :END:
+/#+BEGIN_SRC emacs-lisp
   (use-package emms
     :ensure t
     :config
@@ -294,6 +295,49 @@ Adds link following to eww (qutebrowser style)
     ("C-m l" . emms-next)
     ("C-m p" . emms-pause)
     ("C-m s" . emms-stop)))
+/#+END_SRC
+*** dmenu
+  :PROPERTIES:
+  :header-args: :tangle ~/.emacs.d/init.el
+  :END:
+#+BEGIN_SRC emacs-lisp
+(use-package dmenu)
+#+END_SRC
+** EXWM
+*** Desktop profile for exwm - NEEDS WORK FOR MAKING SUDO
+;  :PROPERTIES:
+;  :header-args: :tangle :mkdirp /usr/share/xsessions/exwm.desktop
+;  :END:
+;#+BEGIN_SRC 
+[Desktop Entry]
+Name=EXWM
+Comment=Emacs X Windows Manager
+Exec=emacs
+Type=Application
+;#+END_SRC
+*** The exwm package itself
+  :PROPERTIES:
+  :header-args: :tangle ~/.emacs.d/init.el
+  :END:
+#+BEGIN_SRC emacs-lisp
+  (use-package exwm
+    :ensure t
+    :config
+    (require 'exwm-config)
+    (exwm-config-default))
+#+END_SRC
+*** Keybindings for EXWM
+  :PROPERTIES:
+  :header-args: :tangle ~/.emacs.d/init.el
+  :END:
+#+BEGIN_SRC emacs-lisp
+  (global-set-key (kbd "s-j") 'other-window)
+  (global-set-key (kbd "s-SPC") 'dmenu)
+  (global-set-key (kbd "s-n") 'split-window-right)
+  (global-set-key (kbd "s-b") 'split-window-below)
+  (global-set-key (kbd "s-q") 'kill-buffer-and-window)
+  (global-set-key (kbd "s-w") 'delete-window)
+  (global-set-key (kbd "s-e") 'delete-other-windows)
 #+END_SRC
 ** Themes
   :PROPERTIES:
