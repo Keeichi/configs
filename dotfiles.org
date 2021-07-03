@@ -1,7 +1,3 @@
-#+STARTUP: overview hideblocks
-#+OPTIONS: num:nil author:nil
-#+PROPERTY: header-args :mkdirp yes
-
 WARNING: This readme is EXTREMELY long!
 I suggest clicking on a link below to navigate the page:
 
@@ -23,6 +19,40 @@ C-c ' (while in source block, see <s (tab) above ^^^) opens code block in mini b
 ** Helpful url links
 https://www.inmotionhosting.com/support/edu/emacs/create-dotfiles-with-emacs/
 https://to1ne.gitlab.io/literate-dotfiles/
+* Guix
+** How to install
+The install process is simple, you just download guix-installsh to the /tmp directory, make it executable, and run it.
+1. cd /tmp
+2. wget https://git.savannah.gnu.org/cgit/guix.git/plain/etc/guix-install.sh
+3. chmod +x guix-install.sh
+4. sudo ./guix-install.sh
+
+It's not necessary to use wget for this, you can just download the script using your browser.
+
+Once you start running the script, it will likely prompt you to download and install a GPG key that the Guix binaries are signed with.
+Run this command to download and install the key (you must have gpg installed!)
+
+When the script is running, it will ask you this question:
+Permit downloading pre-built package binaries from the project's build farm?
+Answering yes means that you want to only use binaries for your packages
+Answering no means that you want to build all of your programs from source ala gentoo
+** How to access programs downloaded by guix
+  :PROPERTIES:
+  :header-args: :tangle ~/.bash_profile
+  :END:
+To make sure you can easily access all the applications you install with Guix, you'll want to make sure that your Guix "profile" gets loaded as part of your shell environment!
+
+Make sure these lines are in your ~/.bash_profile, ~/.zprofile or generally the file your preffered shell uses to configure the environment.
+#+BEGIN_SRC 
+GUIX_PROFILE="$HOME/.guix-profile"
+. $GUIX_PROFILE/etc/profile"
+#+END_SRC
+The difference between .bash_profile and .bashrc is that .bash_profile gets loaded anytime you log into your system while .bashrc gets loaded anytime you start a shell.
+** Commands
+guix install package-name
+guix pull (apt update)
+guix package -u (update package)
+
 * Emacs
 ** Sensible Defaults
   :PROPERTIES:
@@ -39,7 +69,16 @@ Lets Start with some sensible defaults
 (setq initial-buffer-choice 'eshell)
 
 ;; set line highlight mode in gui mode only
-(when window-system (global-hl-line-mode t))
+;; (when window-system (global-hl-line-mode t))
+;; set line highlight mode always
+(global-hl-line-mode t)
+
+;; SCROLLING
+;; Keep cursor at same line when scrolling
+(setq scroll-preserve-screen-position 1)
+;; scroll window up/down by one line
+(global-set-key (kbd "M-n") (kbd "C-u 1 C-v"))
+(global-set-key (kbd "M-p") (kbd "C-u 1 M-v"))
 
 (scroll-bar-mode -1)	; Disable visible scrollbar
 (tool-bar-mode -1)	; Disable the toolbar
@@ -106,7 +145,7 @@ This is all kinds of necessary for setting up configs
 ** Configured-Packages
 *** which-key
   :PROPERTIES:
-  :header-args: :tangle :mkdirp ~/.emacs.d/init.el
+  :header-args: :tangle ~/.emacs.d/init.el
   :END:
 #+BEGIN_SRC emacs-lisp
 (use-package which-key)
@@ -303,6 +342,14 @@ Adds link following to eww (qutebrowser style)
 #+BEGIN_SRC emacs-lisp
 (use-package dmenu)
 #+END_SRC
+*** elfeed
+  :PROPERTIES:
+  :header-args: :tangle ~/.emacs.d/init.el
+  :END:
+#+BEGIN_SRC emacs-lisp
+(use-package elfeed)
+#+END_SRC
+
 ** EXWM
 *** Desktop profile for exwm - NEEDS WORK FOR MAKING SUDO
 ;  :PROPERTIES:
@@ -368,7 +415,7 @@ Just remove the file, start mpd, which will produce an error saying that the fil
 
 ** Config
   :PROPERTIES:
-  :header-args: :tangle :mkdirp ~/.mpd/mpd.conf
+  :header-args: :tangle ~/.mpd/mpd.conf
   :END:
 
 Main Configuration for mpd
@@ -437,7 +484,7 @@ Plain file for mpd to store it's current state
 * Ncmpcpp
 ** Config
   :PROPERTIES:
-  :header-args: :tangle :mkdirp ~/.ncmpcpp/config
+  :header-args: :tangle ~/.ncmpcpp/config
   :END:
 
 #+BEGIN_SRC C
@@ -526,7 +573,7 @@ visualizer_color = "red"
 #+END_SRC
 ** Keybindings
   :PROPERTIES:
-  :header-args: :tangle :mkdirp  ~/.ncmpcpp/bindings
+  :header-args: :tangle  ~/.ncmpcpp/bindings
   :END:
 #+BEGIN_SRC C
 ##############################################################
@@ -1014,9 +1061,26 @@ def_key "P"
 # add shift j and shift k to move between view modes (originally keys 1 through 6) // or maybe set it to be volume up and down to match mpv?
 #+END_SRC
 
+* xmodmap
+
+  :PROPERTIES:
+  :header-args: :tangle ~/.Xmodmap
+  :END:
+This is how we swap capslock and control
+#+BEGIN_SRC shell
+clear lock
+clear control
+keycode 66 = Control_L
+add control = Control_L
+add lock = Control_R
+#+END_SRC
+
+This replaces CapsLock with control and also replaces the Ctrl key on the right side with CapsLock just in case you ever need to use it. Most login systems (GDM, KDM, etc) will load this file when you log in so you might not need to do anything extra for it to take effect, just log out and log back in again. If that doesn’t seem to work, you can add this line to one of your startup files (.xinitrc, .profile, window manager configuration, etc):
+xmodmap ~/.Xmodmap
+
 * Xresources
   :PROPERTIES:
-  :header-args: :tangle :mkdirp ~/.Xresources
+  :header-args: :tangle ~/.Xresources
   :END:
 This file configures the low level settings of x-org, and is many programs use it to base their themes off of.
 #+BEGIN_SRC shell
@@ -1140,7 +1204,7 @@ alias .......="cd ../../../../../.."
 #+END_SRC
 * i3wm
   :PROPERTIES:
-  :header-args: :tangle :mkdirp ~/.config/i3/config
+  :header-args: :tangle ~/.config/i3/config
   :END:
 #+BEGIN_SRC idk
 # Should you change your keyboard layout some time, delete
@@ -1318,7 +1382,7 @@ bar {
 #+END_SRC
 * mopidy
   :PROPERTIES:
-  :header-args: :tangle :mkdirp ~/.config/mopidy/mopidy.conf
+  :header-args: :tangle ~/.config/mopidy/mopidy.conf
   :END:
 #+BEGIN_SRC idk
 # For further information about options in this file see:
@@ -1493,7 +1557,7 @@ Logging in: you can asign this using your config file, but to do so manualy:
 
 ** config
   :PROPERTIES:
-  :header-args: :tangle :mkdirp ~/.irssi/config
+  :header-args: :tangle ~/.irssi/config
   :END:
 
 #+BEGIN_SRC idk
@@ -1808,7 +1872,7 @@ settings = {
 #+END_SRC
 * rtorrent
   :PROPERTIES:
-  :header-args: :tangle :mkdirp ~/.rtorrent.rc
+  :header-args: :tangle ~/.rtorrent.rc
   :END:
 
 #+BEGIN_SRC idk
